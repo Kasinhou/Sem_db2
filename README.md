@@ -1,0 +1,1 @@
+"# Infrastruktura zachranneho systemu" 
