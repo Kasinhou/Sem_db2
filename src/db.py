@@ -52,3 +52,6 @@ if __name__ == "__main__":
     except Exception as exc:
         print("Pripojenie ZLYHALO:")
         print(f"  {type(exc).__name__}: {exc}")
+
+
+            
