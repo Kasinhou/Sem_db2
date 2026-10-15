@@ -1,13 +1,24 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from ui.reusable_ui_elements import setup_table, open_form
+from ui.reusable_ui_elements import setup_table, open_form, update_table_columns
+from datetime import date, datetime
 
 class People_menu:
     def __init__(self, root):
         self.root = root
+        self.current_view = 0 #0 - people, 1 - contacts, 2 - operators;
         self.selected_person = None
-        self.create()
+        self.selected_contact = None
+        self.selected_operator = None
+        self.bigest_contact_id = 0
+        self.bigest_operator_id = 0
+
+        #temp before sql
         self.temp_people = [("841106/3456","Jozko","Mrkvicka"),("855130/3695","Magdalena","Mrkvova"),("850130/3695","Mojmir","Kovac"),("845312/7845","Marisa","Clnkova")]
+        self.temp_contacts = [(0,"090315676","841106/3456")]
+        self.temp_operators = [(0,0,"Magda","someone",datetime.now(),"855130/3695")]
+        
+        self.create()
 
 
     def create(self):
@@ -33,15 +44,28 @@ class People_menu:
         ttk.Button(
             top_buttons,
             text="Get Personal Infos",
-            command=self.load_people
+            command= lambda: (setattr(self, "current_view", 0), self.update_view_table())
+        ).pack(side="left", padx=(0, 10))
+
+        ttk.Button(
+            top_buttons,
+            text="Get Contact Infos",
+            command=lambda: (setattr(self, "current_view", 1), self.update_view_table())
+        ).pack(side="left", padx=(0, 10))
+
+        ttk.Button(
+            top_buttons,
+            text="Get Operator Infos",
+            command=lambda: (setattr(self, "current_view", 2), self.update_view_table())
         ).pack(side="left")
 
+        self.action_buttons = []
         # Table
-        des = ["personal_id_number", "first_name", "last_name"]        
-        self.tree = setup_table(self.root, des)
+        self.tree = setup_table(self.root,["personal_id_number", "first_name", "last_name"])
+        self.load_data()
         self.tree.bind(
             "<<TreeviewSelect>>",
-            self.on_person_selected
+            self.on_selected
         )
 
         # Actions for the selected person
@@ -52,11 +76,11 @@ class People_menu:
         )
         actions.pack(fill="x", padx=15, pady=15)
 
-        self.action_buttons = []
+        #self.action_buttons = []
 
         buttons = [
-            ("Edit", self.edit_person),
-            ("Delete", self.delete_person),
+            ("Edit", self.edit_data),
+            ("Delete", self.delete_data),
             ("Add Contact", self.add_contact),
             ("Add Operator", self.add_operator),
         ]
@@ -73,9 +97,9 @@ class People_menu:
     
     def add_person(self):
         person = open_form(self.root,"Add Personal Info", [
-            ("personal_id_number", "Personal identification number"),
-            ("first_name", "First name"),
-            ("last_name", "Last name")
+            ("personal_id_number", "Personal identification number", str),
+            ("first_name", "First name", str),
+            ("last_name", "Last name", str)
         ])
 
         if(person is None):
@@ -84,7 +108,7 @@ class People_menu:
         #use sql to save person
 
         self.temp_people.append(person)
-        self.load_people()
+        self.load_data()
 
     def edit_person(self):
         if not self.selected_person:
@@ -93,9 +117,9 @@ class People_menu:
         values = self.tree.item(self.selected_person, "values")
 
         person = open_form(self.root,"Edit Personal Info", [
-            ("original_personal_id_number", "Personal identification number (read-only ID)"),
-            ("first_name", "First name"),
-            ("last_name", "Last name")
+            ("original_personal_id_number", "Personal identification number (read-only ID)", str),
+            ("first_name", "First name", str),
+            ("last_name", "Last name", str)
         ], {
             "original_personal_id_number": values[0],
             "first_name": values[1],
@@ -110,6 +134,62 @@ class People_menu:
                 self.temp_people[i] = person 
                 break
         #use sql to save person        
+
+    def edit_contact(self):
+        if not self.selected_contact:
+            return
+
+        values = self.tree.item(self.selected_contact, "values")
+
+        contact = open_form(self.root,"Edit Contact Info", [
+            ("contact id", "Contact id (read-only ID)", int),
+            ("phone number", "Phone number", str),
+            ("original_personal_id_number", "Personal identification number", str)
+        ], {
+            "contact id": values[0],
+            "phone number": values[1],
+            "original_personal_id_number": values[2]
+        })
+        if(contact is None):
+            return
+
+        self.tree.item(self.selected_contact, values=contact)  
+        for i in range(len(self.temp_contacts)):
+            if self.temp_contacts[i][0] == self.selected_contact:
+                self.temp_contacts[i] = contact 
+                break
+        #use sql to save contact        
+
+    def edit_operator(self):
+        if not self.selected_operator:
+            return
+
+        values = self.tree.item(self.selected_operator, "values")
+        "operator_id","system_group_id","username","role","hire_date","personal_id_number"
+        operator = open_form(self.root,"Edit Operator Info", [
+            ("operator_id", "Operator ID (read-only ID)", int),
+            ("system_group_id", "System group id name", int),
+            ("username", "Username", str),
+            ("role", "Role", str),
+            ("hire date", "Hire date", date),
+            ("personal id number", "Personal identification number", str)
+        ], {
+            "operator_id": values[0],
+            "system_group_id": values[1],
+            "username": values[2],
+            "role": values[3],
+            "hire date": values[4],
+            "personal id number": values[5]
+        })
+        if(operator is None):
+            return
+
+        self.tree.item(self.selected_operator, values=operator)  
+        for i in range(len(self.temp_operators)):
+            if self.temp_operators[i][0] == self.selected_operator:
+                self.temp_operators[i] = operator 
+                break
+        #use sql to save operator        
     
     def delete_person(self):
         if not self.selected_person:
@@ -128,31 +208,87 @@ class People_menu:
                 break
         
         self.selected_person = None
-        self.load_people()
 
-    def load_people(self):
+    def delete_contact(self):
+        if not self.selected_contact:
+            return
+
+        if not messagebox.askyesno(
+            "Confirm delete",
+            "Do you really want to delete this contact?"
+        ):
+            return
+
+        #ADD SQL
+        for i in range(len(self.temp_contacts)):
+            if self.temp_contacts[i][0] == self.selected_contact:
+                self.temp_contacts.remove(self.temp_contacts[i])
+                break
+        
+        self.selected_contact = None
+    
+    def delete_operator(self):
+        if not self.selected_operator:
+            return
+
+        if not messagebox.askyesno(
+            "Confirm delete",
+            "Do you really want to delete this operator?"
+        ):
+            return
+
+        #ADD SQL
+        for i in range(len(self.temp_operators)):
+            if self.temp_operators[i][0] == self.selected_operator:
+                self.temp_operators.remove(self.temp_operators[i])
+                break
+        
+        self.selected_operator = None    
+
+    def load_data(self):
         #Write select here
         
         self.tree.delete(*self.tree.get_children())
 
-        for row in self.temp_people:
-            self.tree.insert("", "end", iid=row[0], values=row)
+        match self.current_view:
+            case 0:
+                for row in self.temp_people:
+                    self.tree.insert("", "end", iid=row[0], values=row)
+            case 1:
+                for row in self.temp_contacts:
+                    self.tree.insert("", "end", iid=row[0], values=row)
+            case 2:
+                for row in self.temp_operators:
+                    self.tree.insert("", "end", iid=row[0], values=row)
 
         self.selected_person = None
+        self.selected_contact = None
+        self.selected_operator = None
         for button in self.action_buttons:
             button.config(state="disabled")
 
 
-    def on_person_selected(self, event=None):
+    def on_selected(self, event=None):
         selected = self.tree.selection()
 
         if selected:
-            self.selected_person = selected[0]
-
-            for button in self.action_buttons:
-                button.config(state="normal")
+            match self.current_view:
+                case 0:
+                    self.selected_person = selected[0]
+                    for button in self.action_buttons:
+                        button.config(state="normal")
+                case 1:
+                    self.selected_contact = selected[0]                
+                    for i in range(2):
+                        self.action_buttons[i].config(state="normal")
+                case 2:
+                    self.selected_operator = selected[0]                
+                    for i in range(2):
+                        self.action_buttons[i].config(state="normal")
         else:
             self.selected_person = None
+            self.selected_contact = None
+            self.selected_operator = None
 
             for button in self.action_buttons:
                 button.config(state="disabled")
@@ -162,22 +298,65 @@ class People_menu:
             return
 
         contact = open_form(self.root,"Add Contact", [
-            ("phone_number", "Phone number")
+            ("phone_number", "Phone number", str)
         ])
         if(contact is None):
             return
         #use sql
+        self.bigest_contact_id+=1
+        self.temp_contacts.append((self.bigest_contact_id,contact[0],self.selected_person))
+        self.current_view = 1
+        self.update_view_table()
 
     def add_operator(self):
         if not self.selected_person:
             return
 
         operator = open_form(self.root,"Add Operator", [
-            ("system_group_id", "System group ID"),
-            ("username", "Username"),
-            ("role", "Role"),
-            ("hire_date", "Hire date (YYYY-MM-DD)")
+            ("system_group_id", "System group ID", int),
+            ("username", "Username", str),
+            ("role", "Role", str),
+            ("hire_date", "Hire date (YYYY-MM-DD)", date)
         ])
         if(operator is None):
             return
         #use sql
+        self.bigest_operator_id += 1
+        self.temp_operators.append((self.bigest_operator_id,operator[0],operator[1],operator[2],operator[3],self.selected_person))
+        self.current_view = 2
+        self.update_view_table()
+    
+    def update_view_table(self):
+        match self.current_view:
+            case 0:
+                des = ["personal_id_number", "first_name", "last_name"]        
+                update_table_columns(self.tree, des)
+            case 1:
+                des = ["contact_id", "phone_number", "personal_id_number"]        
+                update_table_columns(self.tree, des)
+            case 2:
+                des = ["operator_id","system_group_id","username","role","hire_date","personal_id_number"]        
+                update_table_columns(self.tree, des)
+        self.load_data()
+
+
+    def edit_data(self):
+        match self.current_view:
+            case 0:
+                self.edit_person()
+            case 1:
+                self.edit_contact()
+            case 2:
+                self.edit_operator()
+
+    def delete_data(self):
+        match self.current_view:
+            case 0:
+                self.delete_person()
+            case 1:
+                self.delete_contact()
+            case 2:
+                self.delete_operator()
+        self.load_data()
+        
+
