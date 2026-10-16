@@ -143,7 +143,7 @@ class System_group_menu:
         #use sql to save person        
 
     def edit_unit(self):
-        if self.selected_unit_type is None:
+        if self.selected_unit is None:
             return
 
         values = self.tree.item(self.selected_unit, "values")
@@ -214,7 +214,7 @@ class System_group_menu:
         self.selected_system_group = None
 
     def delete_unit(self):
-        if self.selected_unit_type is None:
+        if self.selected_unit is None:
             return
 
         if not messagebox.askyesno(
