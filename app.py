@@ -5,6 +5,7 @@ from tkinter import ttk
 import src.db as db
 from ui.people_menu import People_menu
 from ui.system_group_menu import System_group_menu
+from ui.report_menu import Report_menu
 
 class Application:
     def __init__(self, root):
@@ -23,6 +24,10 @@ class Application:
         self.menu.add_command(
             label="System Group",
             command=self.show_system_group_menu
+        )
+        self.menu.add_command(
+            label="Report",
+            command=self.show_report_menu
         )
         self.menu.add_separator()
         self.menu.add_command(
@@ -66,6 +71,14 @@ class Application:
         self.current_menu.pack(fill="both", expand=True)
 
         System_group_menu(self.current_menu)
+
+    def show_report_menu(self):
+        self.clear_menu()
+
+        self.current_menu = ttk.Frame(self.content_frame)
+        self.current_menu.pack(fill="both", expand=True)
+
+        Report_menu(self.current_menu)
 
 
 if __name__ == "__main__":

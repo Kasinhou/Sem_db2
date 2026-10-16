@@ -5,15 +5,6 @@ from tkcalendar import DateEntry
 from tkinter import filedialog
 from pathlib import Path
 
-def get_table_as_string(description, data) -> str :
-    result = ''
-
-    for i in range(len(data)):
-        for j in range(len(description)):
-            result += description[j] + "\t" + data[i][j]
-            
-    return result
-
 def show_table(root, description, data) :
     
     tree = setup_table(root, description)
