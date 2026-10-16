@@ -24,7 +24,7 @@ class Report_menu:
         self.attachment_module = attachment_module
         self.case_note_module = case_note_module
 
-        self.modules = [self.operator_module, self.call_report_modul, self.fault_report_module, self.case_file_module, self.case_unit_module, self.attachment_module, self.case_note_module]
+        self.modules = [self.operator_module, self.call_report_module, self.fault_report_module, self.case_file_module, self.case_unit_module, self.attachment_module, self.case_note_module]
 
         self.current_view = 0 #0 - operators, 1-call reports, 2 - fault reports, 3 - case files, 4 - case unit assognments, 5 -attachments, 6 case notes
 
