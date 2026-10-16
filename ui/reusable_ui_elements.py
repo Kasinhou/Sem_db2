@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import date, datetime
 from tkcalendar import DateEntry
+from tkinter import filedialog
+from pathlib import Path
 
 def get_table_as_string(description, data) -> str :
     result = ''
@@ -60,9 +62,6 @@ def setup_table(root, description):
 
     return tree
 
-import tkinter as tk
-from tkinter import ttk, messagebox
-from datetime import date
 
 
 def open_form(root, title, fields, initial=None):
@@ -72,8 +71,10 @@ def open_form(root, title, fields, initial=None):
         ...
     ]
 
-    Supported types: str, int, float, date
+    Supported types: str, int, float, date, file
     Date format: YYYY-MM-DD
+    Blank fields return None.
+    File fields return the selected file path as str.
     """
     window = tk.Toplevel(root)
     window.title(title)
@@ -88,16 +89,51 @@ def open_form(root, title, fields, initial=None):
             row=i, column=0, padx=10, pady=8, sticky="w"
         )
 
-        entry = ttk.Entry(window, width=30) if data_type != date else DateEntry(window, width=30, date_pattern="yyyy-mm-dd")
-        entry.grid(row=i, column=1, padx=10, pady=8)
+        if data_type is date:
+            entry = DateEntry(
+                window, width=30, date_pattern="yyyy-mm-dd"
+            )
+            entry.grid(row=i, column=1, padx=10, pady=8)
+
+        elif data_type == "file":
+            # Store the file path in a StringVar
+            variable = tk.StringVar()
+            entry = ttk.Entry(
+                window, width=30, textvariable=variable
+            )
+            entry.grid(
+                row=i, column=1, padx=10, pady=8
+            )
+
+            def browse(var=variable):
+                path = filedialog.askopenfilename(
+                    parent=window,
+                    title="Select a file"
+                )
+                if path:
+                    var.set(path)
+
+            ttk.Button(
+                window,
+                text="Browse...",
+                command=browse
+            ).grid(row=i, column=2, padx=5, pady=8)
+
+        else:
+            entry = ttk.Entry(window, width=30)
+            entry.grid(row=i, column=1, padx=10, pady=8)
 
         if initial and name in initial:
             value = initial[name]
 
-            if data_type is date and isinstance(value, date):
-                value = value.isoformat()
+            if value is not None:
+                if data_type is date and isinstance(value, date):
+                    value = value.isoformat()
 
-            entry.insert(0, str(value))
+                if data_type == "file":
+                    entry.insert(0, str(value))
+                elif data_type is not date:
+                    entry.insert(0, str(value))
 
         entries[name] = (entry, data_type)
 
@@ -109,7 +145,7 @@ def open_form(root, title, fields, initial=None):
             for name, (entry, data_type) in entries.items():
                 value = entry.get().strip()
 
-                if not value:                    
+                if not value:
                     data[name] = None
                     continue
 
@@ -121,6 +157,8 @@ def open_form(root, title, fields, initial=None):
                     converted = float(value)
                 elif data_type is date:
                     converted = entry.get_date()
+                elif data_type == "file":
+                    converted = value
                 else:
                     raise ValueError(
                         f"Unsupported data type: {data_type}"

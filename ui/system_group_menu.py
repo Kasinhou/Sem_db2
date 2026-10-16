@@ -154,7 +154,7 @@ class System_group_menu:
             ("status", "Status", str),
             ("last_position", "Last Postion", str),
             ("equipment", "Equipment", str),
-            ("photo", "Phooto", str)
+            ("photo", "Photo", "file")
         ], {
             "unit_type_id": values[0],
             "call_sign": values[1],
@@ -307,7 +307,7 @@ class System_group_menu:
             ("status", "Status", str),
             ("last_position", "Last Postion", str),
             ("equipment", "Equipment", str),
-            ("photo", "Phooto", str)
+            ("photo", "Phooto", "file")
         ])
         if(unit is None):
             return
