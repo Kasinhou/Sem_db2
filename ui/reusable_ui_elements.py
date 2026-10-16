@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import date, datetime
+from tkcalendar import DateEntry
 
 def get_table_as_string(description, data) -> str :
     result = ''
@@ -87,7 +88,7 @@ def open_form(root, title, fields, initial=None):
             row=i, column=0, padx=10, pady=8, sticky="w"
         )
 
-        entry = ttk.Entry(window, width=30)
+        entry = ttk.Entry(window, width=30) if data_type != date else DateEntry(window, width=30, date_pattern="yyyy-mm-dd")
         entry.grid(row=i, column=1, padx=10, pady=8)
 
         if initial and name in initial:
@@ -119,7 +120,7 @@ def open_form(root, title, fields, initial=None):
                 elif data_type is float:
                     converted = float(value)
                 elif data_type is date:
-                    converted = date.fromisoformat(value)
+                    converted = entry.get_date()
                 else:
                     raise ValueError(
                         f"Unsupported data type: {data_type}"

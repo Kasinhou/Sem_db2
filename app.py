@@ -21,7 +21,7 @@ class Application:
             command=self.show_people
         )
         self.menu.add_command(
-            label="Another menu",
+            label="System Group",
             command=self.show_system_group_menu
         )
         self.menu.add_separator()
@@ -31,7 +31,7 @@ class Application:
         )
 
         self.menubar.add_cascade(
-            label="System",
+            label="Menu",
             menu=self.menu
         )
         self.root.config(menu=self.menubar)
