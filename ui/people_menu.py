@@ -14,9 +14,9 @@ class People_menu:
         self.bigest_operator_id = 0
 
         #temp before sql
-        self.temp_people = [("841106/3456","Jozko","Mrkvicka"),("855130/3695","Magdalena","Mrkvova"),("850130/3695","Mojmir","Kovac"),("845312/7845","Marisa","Clnkova")]
-        self.temp_contacts = [(0,"090315676","841106/3456")]
-        self.temp_operators = [(0,0,"Magda","someone",datetime.now(),"855130/3695")]
+        self.people = [("841106/3456","Jozko","Mrkvicka"),("855130/3695","Magdalena","Mrkvova"),("850130/3695","Mojmir","Kovac"),("845312/7845","Marisa","Clnkova")]
+        self.contacts = [(0,"090315676","841106/3456")]
+        self.operators = [(0,0,"Magda","someone",datetime.now(),"855130/3695")]
         
         self.create()
 
@@ -71,7 +71,7 @@ class People_menu:
         # Actions for the selected person
         actions = ttk.LabelFrame(
             self.root,
-            text="Selected Person Actions",
+            text="Selected data Actions",
             padding=10
         )
         actions.pack(fill="x", padx=15, pady=15)
@@ -107,7 +107,7 @@ class People_menu:
         
         #use sql to save person
 
-        self.temp_people.append(person)
+        self.people.append(person)
         self.load_data()
 
     def edit_person(self):
@@ -129,14 +129,14 @@ class People_menu:
             return
 
         self.tree.item(self.selected_person, values=person)  
-        for i in range(len(self.temp_people)):
-            if self.temp_people[i][0] == self.selected_person:
-                self.temp_people[i] = person 
+        for i in range(len(self.people)):
+            if self.people[i][0] == self.selected_person:
+                self.people[i] = person 
                 break
         #use sql to save person        
 
     def edit_contact(self):
-        if not self.selected_contact:
+        if self.selected_contact is None:
             return
 
         values = self.tree.item(self.selected_contact, "values")
@@ -154,14 +154,14 @@ class People_menu:
             return
 
         self.tree.item(self.selected_contact, values=contact)  
-        for i in range(len(self.temp_contacts)):
-            if self.temp_contacts[i][0] == self.selected_contact:
-                self.temp_contacts[i] = contact 
+        for i in range(len(self.contacts)):
+            if self.contacts[i][0] == self.selected_contact:
+                self.contacts[i] = contact 
                 break
         #use sql to save contact        
 
     def edit_operator(self):
-        if not self.selected_operator:
+        if self.selected_operator is None:
             return
 
         values = self.tree.item(self.selected_operator, "values")
@@ -185,9 +185,9 @@ class People_menu:
             return
 
         self.tree.item(self.selected_operator, values=operator)  
-        for i in range(len(self.temp_operators)):
-            if self.temp_operators[i][0] == self.selected_operator:
-                self.temp_operators[i] = operator 
+        for i in range(len(self.operators)):
+            if self.operators[i][0] == self.selected_operator:
+                self.operators[i] = operator 
                 break
         #use sql to save operator        
     
@@ -202,15 +202,15 @@ class People_menu:
             return
 
         #ADD SQL
-        for i in range(len(self.temp_people)):
-            if self.temp_people[i][0] == self.selected_person:
-                self.temp_people.remove(self.temp_people[i])
+        for i in range(len(self.people)):
+            if self.people[i][0] == self.selected_person:
+                self.people.remove(self.people[i])
                 break
         
         self.selected_person = None
 
     def delete_contact(self):
-        if not self.selected_contact:
+        if self.selected_contact is None:
             return
 
         if not messagebox.askyesno(
@@ -220,15 +220,15 @@ class People_menu:
             return
 
         #ADD SQL
-        for i in range(len(self.temp_contacts)):
-            if self.temp_contacts[i][0] == self.selected_contact:
-                self.temp_contacts.remove(self.temp_contacts[i])
+        for i in range(len(self.contacts)):
+            if self.contacts[i][0] == self.selected_contact:
+                self.contacts.remove(self.contacts[i])
                 break
         
         self.selected_contact = None
     
     def delete_operator(self):
-        if not self.selected_operator:
+        if self.selected_operator is None:
             return
 
         if not messagebox.askyesno(
@@ -238,9 +238,9 @@ class People_menu:
             return
 
         #ADD SQL
-        for i in range(len(self.temp_operators)):
-            if self.temp_operators[i][0] == self.selected_operator:
-                self.temp_operators.remove(self.temp_operators[i])
+        for i in range(len(self.operators)):
+            if self.operators[i][0] == self.selected_operator:
+                self.operators.remove(self.operators[i])
                 break
         
         self.selected_operator = None    
@@ -252,13 +252,13 @@ class People_menu:
 
         match self.current_view:
             case 0:
-                for row in self.temp_people:
+                for row in self.people:
                     self.tree.insert("", "end", iid=row[0], values=row)
             case 1:
-                for row in self.temp_contacts:
+                for row in self.contacts:
                     self.tree.insert("", "end", iid=row[0], values=row)
             case 2:
-                for row in self.temp_operators:
+                for row in self.operators:
                     self.tree.insert("", "end", iid=row[0], values=row)
 
         self.selected_person = None
@@ -278,11 +278,11 @@ class People_menu:
                     for button in self.action_buttons:
                         button.config(state="normal")
                 case 1:
-                    self.selected_contact = selected[0]                
+                    self.selected_contact = int(selected[0])                
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
                 case 2:
-                    self.selected_operator = selected[0]                
+                    self.selected_operator = int(selected[0])               
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
         else:
@@ -304,7 +304,7 @@ class People_menu:
             return
         #use sql
         self.bigest_contact_id+=1
-        self.temp_contacts.append((self.bigest_contact_id,contact[0],self.selected_person))
+        self.contacts.append((self.bigest_contact_id,contact[0],self.selected_person))
         self.current_view = 1
         self.update_view_table()
 
@@ -322,7 +322,7 @@ class People_menu:
             return
         #use sql
         self.bigest_operator_id += 1
-        self.temp_operators.append((self.bigest_operator_id,operator[0],operator[1],operator[2],operator[3],self.selected_person))
+        self.operators.append((self.bigest_operator_id,operator[0],operator[1],operator[2],operator[3],self.selected_person))
         self.current_view = 2
         self.update_view_table()
     

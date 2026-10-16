@@ -108,8 +108,9 @@ def open_form(root, title, fields, initial=None):
             for name, (entry, data_type) in entries.items():
                 value = entry.get().strip()
 
-                if not value:
-                    raise ValueError(f"{name} cannot be empty.")
+                if not value:                    
+                    data[name] = None
+                    continue
 
                 if data_type is str:
                     converted = value
