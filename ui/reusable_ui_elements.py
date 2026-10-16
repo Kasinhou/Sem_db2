@@ -79,8 +79,21 @@ def open_form(root, title, fields, initial=None):
         ttk.Label(window, text=label).grid(
             row=i, column=0, padx=10, pady=8, sticky="w"
         )
+        if data_type is datetime:
+            # Date and time inputs
+            frame = ttk.Frame(window)
+            frame.grid(row=i, column=1, padx=10, pady=8)
 
-        if data_type is date:
+            entry = DateEntry(
+                frame, width=12, date_pattern="yyyy-mm-dd"
+            )
+            entry.grid(row=0, column=0, padx=(0, 5))
+
+            time_entry = ttk.Entry(frame, width=10)
+            time_entry.grid(row=0, column=1)
+            time_entry.insert(0, "00:00:00")
+
+        elif data_type is date:
             entry = DateEntry(
                 window, width=30, date_pattern="yyyy-mm-dd"
             )
@@ -134,26 +147,47 @@ def open_form(root, title, fields, initial=None):
 
         try:
             for name, (entry, data_type) in entries.items():
-                value = entry.get().strip()
+                if data_type is datetime:
+                    date_value = entry.get_date()
+                    time_value = time_entry.get().strip()
 
-                if not value:
-                    data[name] = None
-                    continue
+                    if not time_value:
+                        data[name] = None
+                        continue
 
-                if data_type is str:
-                    converted = value
-                elif data_type is int:
-                    converted = int(value)
-                elif data_type is float:
-                    converted = float(value)
-                elif data_type is date:
-                    converted = entry.get_date()
-                elif data_type == "file":
-                    converted = value
-                else:
-                    raise ValueError(
-                        f"Unsupported data type: {data_type}"
+                    try:
+                        parsed_time = datetime.strptime(
+                            time_value, "%H:%M:%S"
+                        ).time()
+                    except ValueError:
+                        parsed_time = datetime.strptime(
+                            time_value, "%H:%M"
+                        ).time()
+
+                    converted = datetime.combine(
+                        date_value, parsed_time
                     )
+                else:                
+                    value = entry.get().strip()
+
+                    if not value:
+                        data[name] = None
+                        continue
+
+                    if data_type is str:
+                        converted = value
+                    elif data_type is int:
+                        converted = int(value)
+                    elif data_type is float:
+                        converted = float(value)
+                    elif data_type is date:
+                        converted = entry.get_date()
+                    elif data_type == "file":
+                        converted = value
+                    else:
+                        raise ValueError(
+                            f"Unsupported data type: {data_type}"
+                        )
 
                 data[name] = converted
 
