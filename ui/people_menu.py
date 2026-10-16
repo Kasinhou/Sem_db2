@@ -2,18 +2,17 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from ui.reusable_ui_elements import setup_table, open_form, update_table_columns
 from datetime import date, datetime
-from ui.modules.person_module import Person_modul
-from ui.modules.operator_module import Operator_modul
-from ui.modules.contact_module import Contact_module
 
 class People_menu:
-    def __init__(self, root):
+    def __init__(self, root, person_module, operator_module, contact_module):
         self.root = root
         self.current_view = 0 #0 - people, 1 - contacts, 2 - operators;
 
-        self.person_module = Person_modul(root)
-        self.operator_module = Operator_modul(root)
-        self.contact_module = Contact_module(root)
+        self.person_module = person_module
+        self.operator_module = operator_module
+        self.contact_module = contact_module
+
+        self.modules = [self.person_module, self.contact_module, self.operator_module]
         
         self.create()
 
@@ -36,7 +35,7 @@ class People_menu:
             top_buttons,
             text="Add Personal Info",
             command=lambda: (
-                self.person_module.add_person(),
+                self.person_module.add(),
                 self.load_data()
             )
         ).pack(side="left", padx=(0, 10))
@@ -82,13 +81,13 @@ class People_menu:
             ("Edit", self.edit_data),
             ("Delete", self.delete_data),
             ("Add Contact", lambda: (
-                    self.contact_module.add_contact(),
+                    self.contact_module.add(),
                     setattr(self, "current_view", 1),
                     self.update_view_table()
                 )
             ),
             ("Add Operator", lambda: (
-                    self.operator_module.add_operator(),
+                    self.operator_module.add(),
                     setattr(self, "current_view", 2),
                     self.update_view_table()
                 )
@@ -108,21 +107,12 @@ class People_menu:
 
     def load_data(self):        
         self.tree.delete(*self.tree.get_children())
-
-        match self.current_view:
-            case 0:
-                for row in self.person_module.load_data():
-                    self.tree.insert("", "end", iid=row[0], values=row)
-            case 1:
-                for row in self.contact_module.load_data():
-                    self.tree.insert("", "end", iid=row[0], values=row)
-            case 2:
-                for row in self.operator_module.load_data():
-                    self.tree.insert("", "end", iid=row[0], values=row)
-
-        self.person_module.selected_person = None
-        self.contact_module.selected_contact = None
-        self.operator_module.selected_operator = None
+        
+        for row in self.modules[self.current_view].load():
+            self.tree.insert("", "end", iid=row[0], values=row)
+        
+        for module in self.modules:
+            module.selected = False
         for button in self.action_buttons:
             button.config(state="disabled")
 
@@ -133,54 +123,34 @@ class People_menu:
         if selected:
             match self.current_view:
                 case 0:
-                    self.person_module.selected_person = selected[0]
+                    self.person_module.selected = selected[0]
                     for button in self.action_buttons:
                         button.config(state="normal")
                 case 1:
-                    self.contact_module.selected_contact = int(selected[0])                
+                    self.contact_module.selected = int(selected[0])                
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
                 case 2:
-                    self.operator_module.selected_operator = int(selected[0])               
+                    self.operator_module.selected = int(selected[0])               
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
         else:
-            self.person_module.selected_person = None
-            self.contact_module.selected_contact = None
-            self.operator_module.selected_operator = None
+            for module in self.modules:
+                module.selected = False
 
             for button in self.action_buttons:
                 button.config(state="disabled")
     
     
     def update_view_table(self):
-        match self.current_view:
-            case 0:                      
-                update_table_columns(self.tree, self.person_module.des)
-            case 1:      
-                update_table_columns(self.tree,  self.contact_module.des)
-            case 2:                      
-                update_table_columns(self.tree, self.operator_module.des)
+        update_table_columns(self.tree, self.modules[self.current_view].des)
         self.load_data()
-
-
+        
     def edit_data(self):
-        match self.current_view:
-            case 0:
-                self.person_module.edit_person(self.tree)
-            case 1:
-                self.contact_module.edit_contact(self.tree)
-            case 2:
-                self.operator_module.edit_operator(self.tree)
+        self.modules[self.current_view].edit(self.tree)
 
-    def delete_data(self):
-        match self.current_view:
-            case 0:
-                self.person_module.delete_person()
-            case 1:
-                self.contact_module.delete_contact()
-            case 2:
-                self.operator_module.delete_operator()
+    def delete_data(self):        
+        self.modules[self.current_view].delete()
         self.load_data()
         
 

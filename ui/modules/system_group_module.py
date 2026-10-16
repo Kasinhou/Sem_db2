@@ -2,26 +2,18 @@ from ui.reusable_ui_elements import open_form
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-class System_group_module:
-    _instance = None
+from ui.modules.module import Module
 
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-        return cls._instance
+class System_group_module(Module):
 
     def __init__(self, root):
-        if getattr(self, "_initialized", False):
-            return
-        self.selected_system_group = None
-        self.system_groups = [(0, None, "Blavacky Hasici", "Bratislava")]
+        super().__init__(root)
+        self.values = [(0, None, "Blavacky Hasici", "Bratislava")]
         self.bigest_system_group_id = 0
 
         self.des = ["system_group_id", "parent_group_id", "name", "region"]    
-        self._initialized = True
-        self.root = root
 
-    def add_system_group(self):
+    def add(self):
         group = open_form(self.root,"Add System group", [
             ("parent_group_id", "Parent group id", int),
             ("name", "Name", str),
@@ -36,36 +28,36 @@ class System_group_module:
         self.bigest_system_group_id += 1
         group = (self.bigest_system_group_id , *group)
 
-        self.system_groups.append(group)
+        self.values.append(group)
 
     
-    def edit_system_group(self, tree):
-        if self.selected_system_group is None:
+    def edit(self, tree):
+        if self.selected is None:
             return
 
-        values = tree.item(self.selected_system_group, "values")
+        vals = tree.item(self.selected, "values")
 
         group = open_form(self.root,"Edit System group", [
             ("parent_group_id", "Parent group id", int),
             ("name", "Name", str),
             ("region", "Region", str)
         ], {
-            "parent_group_id": values[0],
-            "name": values[1],
-            "region": values[2]
+            "parent_group_id": vals[1],
+            "name": vals[2],
+            "region": vals[3]
         })
         if(group is None):
             return
 
-        tree.item(self.selected_system_group, values=(values[0], *group))  
-        for i in range(len(self.system_groups)):
-            if self.system_groups[i][0] == self.selected_system_group:
-                self.system_groups[i] = (values[0], *group) 
+        tree.item(self.selected, values=(int(vals[0]), *group))  
+        for i in range(len(self.values)):
+            if self.values[i][0] == self.selected:
+                self.values[i] = (int(vals[0]), *group) 
                 break
         #use sql to save person        
 
-    def delete_system_group(self):
-        if self.selected_system_group is None:
+    def delete(self):
+        if self.selected is None:
             return
 
         if not messagebox.askyesno(
@@ -75,13 +67,13 @@ class System_group_module:
             return
 
         #ADD SQL
-        for i in range(len(self.system_groups)):
-            if self.system_groups[i][0] == self.selected_system_group:
-                self.system_groups.remove(self.system_groups[i])
+        for i in range(len(self.values)):
+            if self.values[i][0] == self.selected:
+                self.values.remove(self.values[i])
                 break
         
-        self.selected_system_group = None   
+        self.selected = None   
 
-    def load_data(self):
+    def load(self):
         #sql
-        return self.system_groups
+        return self.values

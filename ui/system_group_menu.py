@@ -2,18 +2,17 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from ui.reusable_ui_elements import setup_table, open_form, update_table_columns
 from datetime import date, datetime
-from ui.modules.system_group_module import System_group_module
-from ui.modules.unit_module import Unit_module
-from ui.modules.unit_type_module import Unit_type_module
 
 class System_group_menu:
-    def __init__(self, root):
+    def __init__(self, root, group_module, unit_module, unit_type_module):
         self.root = root
         self.current_view = 0 #0 - system_groups, 1 - units, 2 - unit_types;
         
-        self.system_group_module = System_group_module(root)
-        self.unit_module = Unit_module(root)
-        self.unit_type_module = Unit_type_module(root)
+        self.system_group_module = group_module
+        self.unit_module = unit_module
+        self.unit_type_module = unit_type_module
+
+        self.modules = [self.system_group_modul, self.unit_module, self.unit_type_module]
        
         self.create()
 
@@ -36,7 +35,7 @@ class System_group_menu:
             top_buttons,
             text="Add System group",
             command=lambda: (
-                self.system_group_module.add_system_group(),
+                self.system_group_module.add(),
                 self.load_data()
             )
         ).pack(side="left", padx=(0, 10))
@@ -45,7 +44,7 @@ class System_group_menu:
             top_buttons,
             text="Add Unit Type",
             command=lambda: (
-                self.unit_type_module.add_unit_type(),
+                self.unit_type_module.add(),
                 setattr(self, "current_view", 2),
                 self.update_view_table()
             )
@@ -90,7 +89,7 @@ class System_group_menu:
             ("Edit", self.edit_data),
             ("Delete", self.delete_data),
             ("Add Unit", lambda: (
-                    self.unit_module.add_unit(),
+                    self.unit_module.add(),
                     setattr(self, "current_view", 1),
                     self.update_view_table()
                 )
@@ -109,21 +108,12 @@ class System_group_menu:
 
     def load_data(self):        
         self.tree.delete(*self.tree.get_children())
-
-        match self.current_view:
-            case 0:
-                for row in self.system_group_module.load_data():
-                    self.tree.insert("", "end", iid=row[0], values=row)
-            case 1:
-                for row in self.unit_module.load_data():
-                    self.tree.insert("", "end", iid=row[0], values=row)
-            case 2:
-                for row in self.unit_type_module.load_data():
-                    self.tree.insert("", "end", iid=row[0], values=row)
-
-        self.system_group_module.selected_system_group = None
-        self.unit_module.selected_unit = None
-        self.unit_type_module.selected_unit_type = None
+               
+        for row in self.modules[self.current_view].load():
+            self.tree.insert("", "end", iid=row[0], values=row)
+        
+        for module in self.modules:
+            module.selected = False
         for button in self.action_buttons:
             button.config(state="disabled")
 
@@ -134,54 +124,34 @@ class System_group_menu:
         if selected:
             match self.current_view:
                 case 0:
-                    self.system_group_module.selected_system_group = int(selected[0])
+                    self.system_group_module.selected = int(selected[0])
                     for button in self.action_buttons:
                         button.config(state="normal")
                 case 1:
-                    self.unit_module.selected_unit = int(selected[0])                
+                    self.unit_module.selected = int(selected[0])                
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
                 case 2:
-                    self.unit_type_module.selected_unit_type = int(selected[0])               
+                    self.unit_type_module.selected = int(selected[0])               
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
         else:
-            self.system_group_module.selected_system_group = None
-            self.unit_module.selected_unit = None
-            self.unit_type_module.selected_unit_type = None
+            for module in self.modules:
+                module.selected = False
 
             for button in self.action_buttons:
                 button.config(state="disabled")
    
     
     def update_view_table(self):
-        match self.current_view:
-            case 0:     
-                update_table_columns(self.tree, self.system_group_module.des)
-            case 1:      
-                update_table_columns(self.tree, self.unit_module.des)
-            case 2:    
-                update_table_columns(self.tree, self.unit_type_module.des)
-        self.load_data()
-
+        update_table_columns(self.tree, self.modules[self.current_view].des)
+        self.load_data()    
 
     def edit_data(self):
-        match self.current_view:
-            case 0:
-                self.system_group_module.edit_system_group(self.tree)
-            case 1:
-                self.unit_module.edit_unit(self.tree)
-            case 2:
-                self.unit_type_module.edit_unit_type(self.tree)
+        self.modules[self.current_view].edit(self.tree)
 
-    def delete_data(self):
-        match self.current_view:
-            case 0:
-                self.system_group_module.delete_system_group()
-            case 1:
-                self.unit_module.delete_unit()
-            case 2:
-                self.unit_type_module.delete_unit_type()
+    def delete_data(self):        
+        self.modules[self.current_view].delete()
         self.load_data()
         
 
