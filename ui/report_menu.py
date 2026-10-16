@@ -181,31 +181,31 @@ class Report_menu:
         if selected:
             match self.current_view:
                 case 0:
-                    self.operator_module.selected = selected[0]
+                    self.operator_module.selected = int(selected[0])
                     for i in range(8):
                         self.action_buttons[i].config(state="normal")
                 case 1:
-                    self.call_report_module.selected = selected[0]
+                    self.call_report_module.selected = int(selected[0])
                     for i in range(6,8):
                         self.action_buttons[i].config(state="normal")
                 case 2:
-                    self.fault_report_module.selected = selected[0]
+                    self.fault_report_module.selected = int(selected[0])
                     for i in range(6,8):
                         self.action_buttons[i].config(state="normal")
                 case 3:
-                    self.case_file_module.selected = selected[0]
+                    self.case_file_module.selected = int(selected[0])
                     for i in range(6,14):
                         self.action_buttons[i].config(state="normal")
                 case 4:
-                    self.case_unit_module.selected = selected[0]
+                    self.case_unit_module.selected = int(selected[0])
                     for i in range(6,8):
                         self.action_buttons[i].config(state="normal")
                 case 5:
-                    self.attachment_module.selected = selected[0]
+                    self.attachment_module.selected = int(selected[0])
                     for i in range(6,8):
                         self.action_buttons[i].config(state="normal")
                 case 6:
-                    self.case_note_module.selected = selected[0]
+                    self.case_note_module.selected = int(selected[0])
                     for i in range(6,8):
                         self.action_buttons[i].config(state="normal")
         else:

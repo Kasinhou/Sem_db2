@@ -12,7 +12,7 @@ class Call_report_module(Module):
         self.bigest_call_id = 0
 
     def add(self):
-        if not self.operator_module.selected:
+        if self.operator_module.selected is None:
             return
 
         record = open_form(self.root,"Add Call Record", [
@@ -29,10 +29,51 @@ class Call_report_module(Module):
         self.values.append((self.bigest_call_id, record[0], self.operator_module.selected, *record[1:]))
     
     def edit(self,tree):
-        print("NOT IMPLEMENTED YET")
+        if self.selected is None:
+            return
+
+        vals = tree.item(self.selected, "values")
+        "operator_id","system_group_id","username","role","hire_date","personal_id_number"
+        record = open_form(self.root,"Edit Operator Info", [
+            ("contact_id", "Contact ID", int),
+            ("case_id", "Case ID", int),
+            ("call_datetime", "Call Datetime", datetime),
+            ("duration_seconds", "Duration seconds", int),
+            ("status", "Status", str)
+        ], {
+            "contact_id": vals[1],
+            "case_id": vals[3],
+            "call_datetime": vals[4],
+            "duration_seconds": vals[5],
+            "status": vals[6]
+        })
+        if(record is None):
+            return
+
+        tree.item(self.selected, values=(self.selected, record[0], vals[2], *record[1:]))  
+        for i in range(len(self.values)):
+            if self.values[i][0] == self.selected:
+                self.values[i] = (self.selected, record[0], vals[2], *record[1:])
+                break
+        #use sql to save operator      
     
     def delete(self):
-        print("NOT IMPLEMENTED YET")
+        if self.selected is None:
+            return
+
+        if not messagebox.askyesno(
+            "Confirm delete",
+            "Do you really want to delete this call record?"
+        ):
+            return
+
+        #ADD SQL
+        for i in range(len(self.values)):
+            if self.values[i][0] == self.selected:
+                self.values.remove(self.values[i])
+                break
+        
+        self.selected = None    
     
     def load(self):
         #add sql
