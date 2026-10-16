@@ -59,6 +59,7 @@ class Report_menu:
             command=lambda: (setattr(self, "current_view", 1), self.update_view_table())
         )
         button.pack(side="left", padx=(0, 10))
+        self.action_buttons.append(button)   
         button = ttk.Button(
             top_buttons,
             text="Add Call Report",
@@ -73,6 +74,7 @@ class Report_menu:
             command=lambda: (setattr(self, "current_view", 2), self.update_view_table())
         )
         button.pack(side="left", padx=(0, 10))
+        self.action_buttons.append(button)   
         button = ttk.Button(
             top_buttons,
             text="Add Fault Report",
@@ -87,6 +89,7 @@ class Report_menu:
             command=lambda: (setattr(self, "current_view", 3), self.update_view_table())
         )
         button.pack(side="left", padx=(0, 10))
+        self.action_buttons.append(button)   
         button = ttk.Button(
             top_buttons,
             text="Add Case file",
