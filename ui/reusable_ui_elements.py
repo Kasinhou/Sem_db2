@@ -55,6 +55,12 @@ def setup_table(root, description):
 
 
 
+import tkinter as tk
+from tkinter import ttk, filedialog, messagebox
+from datetime import date, datetime
+from tkcalendar import DateEntry
+
+
 def open_form(root, title, fields, initial=None):
     """
     fields = [
@@ -62,11 +68,20 @@ def open_form(root, title, fields, initial=None):
         ...
     ]
 
-    Supported types: str, int, float, date, file
-    Date format: YYYY-MM-DD
+    Supported types: str, int, float, date, datetime, "file"
+
+    Date formats:
+        YYYY-MM-DD
+        YYYY-MM-DD HH:MM
+        YYYY-MM-DD HH:MM:SS
+
+    Initial date/datetime values may be strings or Python objects.
     Blank fields return None.
-    File fields return the selected file path as str.
+    File fields return the selected path as str.
     """
+
+    initial = initial or {}
+
     window = tk.Toplevel(root)
     window.title(title)
     window.transient(root)
@@ -79,8 +94,10 @@ def open_form(root, title, fields, initial=None):
         ttk.Label(window, text=label).grid(
             row=i, column=0, padx=10, pady=8, sticky="w"
         )
+
+        time_entry = None
+
         if data_type is datetime:
-            # Date and time inputs
             frame = ttk.Frame(window)
             frame.grid(row=i, column=1, padx=10, pady=8)
 
@@ -100,14 +117,11 @@ def open_form(root, title, fields, initial=None):
             entry.grid(row=i, column=1, padx=10, pady=8)
 
         elif data_type == "file":
-            # Store the file path in a StringVar
             variable = tk.StringVar()
             entry = ttk.Entry(
                 window, width=30, textvariable=variable
             )
-            entry.grid(
-                row=i, column=1, padx=10, pady=8
-            )
+            entry.grid(row=i, column=1, padx=10, pady=8)
 
             def browse(var=variable):
                 path = filedialog.askopenfilename(
@@ -127,33 +141,57 @@ def open_form(root, title, fields, initial=None):
             entry = ttk.Entry(window, width=30)
             entry.grid(row=i, column=1, padx=10, pady=8)
 
-        if initial and name in initial:
-            value = initial[name]
+        # Populate initial values
+        value = initial.get(name)
 
-            if value is not None:
-                if data_type is date and isinstance(value, date):
-                    value = value.isoformat()
+        if value is not None:
+            if data_type is datetime:
+                if isinstance(value, str):
+                    value = datetime.fromisoformat(value)
+                elif not isinstance(value, datetime):
+                    raise TypeError(
+                        f"{name} must be a datetime or ISO string"
+                    )
 
-                if data_type == "file":
-                    entry.insert(0, str(value))
-                elif data_type is not date:
-                    entry.insert(0, str(value))
+                entry.set_date(value.date())
+                time_entry.delete(0, tk.END)
+                time_entry.insert(0, value.strftime("%H:%M:%S"))
 
-        entries[name] = (entry, data_type)
+            elif data_type is date:
+                if isinstance(value, datetime):
+                    value = value.date()
+                elif isinstance(value, str):
+                    value = date.fromisoformat(value)
+                elif not isinstance(value, date):
+                    raise TypeError(
+                        f"{name} must be a date or ISO string"
+                    )
+
+                entry.set_date(value)
+
+            elif data_type == "file":
+                entry.insert(0, str(value))
+
+            else:
+                entry.insert(0, str(value))
+
+        entries[name] = (entry, data_type, time_entry)
 
     def submit():
         nonlocal result
         data = {}
 
         try:
-            for name, (entry, data_type) in entries.items():
+            for name, (entry, data_type, time_entry) in entries.items():
+
                 if data_type is datetime:
-                    date_value = entry.get_date()
                     time_value = time_entry.get().strip()
 
                     if not time_value:
                         data[name] = None
                         continue
+
+                    date_value = entry.get_date()
 
                     try:
                         parsed_time = datetime.strptime(
@@ -167,7 +205,8 @@ def open_form(root, title, fields, initial=None):
                     converted = datetime.combine(
                         date_value, parsed_time
                     )
-                else:                
+
+                else:
                     value = entry.get().strip()
 
                     if not value:
@@ -199,7 +238,7 @@ def open_form(root, title, fields, initial=None):
             )
             return
 
-        result = tuple(data.values())
+        result = tuple(data[name] for name, *_ in fields)
         window.destroy()
 
     ttk.Button(
