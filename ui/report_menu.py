@@ -170,7 +170,7 @@ class Report_menu:
             self.tree.insert("", "end", iid=row[0], values=row)
         
         for module in self.modules:
-            module.selected = False
+            module.selected = None
         for button in self.action_buttons:
             button.config(state="disabled")
 
@@ -193,7 +193,8 @@ class Report_menu:
                     for i in range(6,8):
                         self.action_buttons[i].config(state="normal")
                 case 3:
-                    self.case_file_module.selected = int(selected[0])
+                    values = self.tree.item(selected[0], "values")
+                    self.case_file_module.selected = (values[0], values[1])
                     for i in range(6,14):
                         self.action_buttons[i].config(state="normal")
                 case 4:
@@ -210,7 +211,7 @@ class Report_menu:
                         self.action_buttons[i].config(state="normal")
         else:
             for module in self.modules:
-                module.selected = False
+                module.selected = None
             for button in self.action_buttons:
                 button.config(state="disabled")
 

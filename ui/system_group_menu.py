@@ -113,7 +113,7 @@ class System_group_menu:
             self.tree.insert("", "end", iid=row[0], values=row)
         
         for module in self.modules:
-            module.selected = False
+            module.selected = None
         for button in self.action_buttons:
             button.config(state="disabled")
 
@@ -137,7 +137,7 @@ class System_group_menu:
                         self.action_buttons[i].config(state="normal")
         else:
             for module in self.modules:
-                module.selected = False
+                module.selected = None
 
             for button in self.action_buttons:
                 button.config(state="disabled")

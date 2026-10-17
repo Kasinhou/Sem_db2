@@ -15,7 +15,7 @@ class Fault_report_module(Module):
         if self.operator_module.selected is None:
             return
     
-        record = open_form(self.root,"Add Call Record", [
+        record = open_form(self.root,"Add Fault Report", [
             ("unit_id", "Unit ID", int),
             ("status", "Status", str),
             ("reported_at", "Reported at", datetime),
@@ -33,7 +33,7 @@ class Fault_report_module(Module):
     
         vals = tree.item(self.selected, "values")
         "operator_id","system_group_id","username","role","hire_date","personal_id_number"
-        record = open_form(self.root,"Edit Operator Info", [
+        record = open_form(self.root,"Edit Fault report", [
             ("unit_id", "Unit ID", int),
             ("status", "Status", str),
             ("reported_at", "Reported at", datetime),
@@ -74,4 +74,12 @@ class Fault_report_module(Module):
     
     def load(self):
         #add sql
-        return self.values
+        res = []
+
+        if self.operator_module.selected is None:
+            return res
+        else:
+            for value in self.values:
+                if value[2] == self.operator_module.selected:
+                    res.append(value)
+        return res

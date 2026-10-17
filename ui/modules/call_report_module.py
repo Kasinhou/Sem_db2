@@ -34,7 +34,7 @@ class Call_report_module(Module):
 
         vals = tree.item(self.selected, "values")
         "operator_id","system_group_id","username","role","hire_date","personal_id_number"
-        record = open_form(self.root,"Edit Operator Info", [
+        record = open_form(self.root,"Edit call record", [
             ("contact_id", "Contact ID", int),
             ("case_id", "Case ID", int),
             ("call_datetime", "Call Datetime", datetime),
@@ -77,4 +77,12 @@ class Call_report_module(Module):
     
     def load(self):
         #add sql
-        return self.values
+        res = []
+
+        if self.operator_module.selected is None:
+            return res
+        else:
+            for value in self.values:
+                if value[2] == self.operator_module.selected:
+                    res.append(value)
+        return res
