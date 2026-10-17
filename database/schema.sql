@@ -25,17 +25,17 @@ create or replace type t_equipment_tab as table of varchar2(100);
 /
 
 -- sekvencie pre primarne kluce tabuliek
-create sequence seq_unit_type            start with 1 increment by 1 nocache;
-create sequence seq_system_group         start with 1 increment by 1 nocache;
-create sequence seq_unit                 start with 1 increment by 1 nocache;
-create sequence seq_operator             start with 1 increment by 1 nocache;
-create sequence seq_contact              start with 1 increment by 1 nocache;
-create sequence seq_case_file            start with 1 increment by 1 nocache;
-create sequence seq_fault_report         start with 1 increment by 1 nocache;
+create sequence seq_unit_type start with 1 increment by 1 nocache;
+create sequence seq_system_group start with 1 increment by 1 nocache;
+create sequence seq_unit start with 1 increment by 1 nocache;
+create sequence seq_operator start with 1 increment by 1 nocache;
+create sequence seq_contact start with 1 increment by 1 nocache;
+create sequence seq_case_file start with 1 increment by 1 nocache;
+create sequence seq_fault_report start with 1 increment by 1 nocache;
 create sequence seq_case_unit_assignment start with 1 increment by 1 nocache;
-create sequence seq_call_record          start with 1 increment by 1 nocache;
-create sequence seq_attachment           start with 1 increment by 1 nocache;
-create sequence seq_case_note            start with 1 increment by 1 nocache;
+create sequence seq_call_record start with 1 increment by 1 nocache;
+create sequence seq_attachment start with 1 increment by 1 nocache;
+create sequence seq_case_note start with 1 increment by 1 nocache;
 
 -- jednotlive tabulky
 create table personal_data (
