@@ -45,4 +45,7 @@ if __name__ == "__main__":
         print(f"Cas servera: {server_time}")
     except Exception as exc:
         print("Pripojenie ZLYHALO:")
-        print(f"{type(exc).__name__}: {exc}")
+        print(f"  {type(exc).__name__}: {exc}")
+
+
+            
