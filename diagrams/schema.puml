@@ -1,143 +1,157 @@
 @startuml
-skinparam roundcorner 5
+skinparam roundcorner 8
 skinparam classAttributeIconSize 0
 skinparam linetype ortho
+skinparam shadowing false
+skinparam ClassBackgroundColor #F8F9FA
+skinparam ClassBorderColor #333333
+skinparam ClassHeaderBackgroundColor #E9ECEF
 
+'unit types (ambulance, fire truck, police car, helicopter)
 entity "UNIT_TYPE" as UNIT_TYPE {
-  * unit_type_id : NUMBER <<PK>>
+  * unit_type_id : INTEGER  NN  <<PK>>
   --
-  code : VARCHAR2(10)
-  name : VARCHAR2(50)
+  code : VARCHAR2(20) NN
+  name : VARCHAR2(50) NN
 }
 
-entity "SYSTEM_GROUP" as SYSTEM_GROUP {
-  * system_group_id : NUMBER <<PK>>
-  --
-  parent_group_id : NUMBER <<FK>>
-  name : VARCHAR2(100)
-  region : VARCHAR2(100)
-}
-
+'Specific response unit/vehicle
 entity "UNIT" as UNIT {
-  * unit_id : NUMBER <<PK>>
+  * unit_id : NUMBER NN <<PK>>
   --
-  unit_type_id : NUMBER <<FK>>
-  system_group_id : NUMBER <<FK>>
-  call_sign : VARCHAR2(20)
-  status : VARCHAR2(20)
+  unit_type_id : INTEGER NN <<FK>>
+  system_group_id : NUMBER NN <<FK>>
+  status : VARCHAR2(20) NN
   last_position : T_GPS_POSITION <<OBJECT>>
   equipment : T_EQUIPMENT_TAB <<COLLECTION>>
   photo : BLOB
 }
 
+entity "SYSTEM_GROUP" as SYSTEM_GROUP {
+  * system_group_id : NUMBER NN <<PK>>
+  --
+  parent_group_id : NUMBER <<FK>>
+  name : VARCHAR2(100) NN
+  region : VARCHAR2(100) NN
+}
+
+
 entity "OPERATOR" as OPERATOR {
   * operator_id : NUMBER <<PK>>
   --
-  system_group_id : NUMBER <<FK>>
-  username : VARCHAR2(30)
-  role : VARCHAR2(20)
-  hire_date : DATE
+  system_group_id : NUMBER  NN <<FK>>
+  rod_cislo : CHAR(11) NN  <<FK>>
+  username : VARCHAR2(30) NN
+  role : VARCHAR2(20) NN
+  active : CHAR(1) NN
 }
 
+'caller (external person)
 entity "CONTACT" as CONTACT {
-  * contact_id : NUMBER <<PK>>
+  * contact_id : NUMBER  NN <<PK>>
   --
-  first_name : VARCHAR2(50)
-  last_name : VARCHAR2(50)
-  phone_number : VARCHAR2(20)
+  rod_cislo : CHAR(11)  NN  <<FK>>
+  phone_number : VARCHAR2(20) NN
 }
 
-entity "FAULT_REPORT" as FAULT_REPORT {
-  * fault_id : NUMBER <<PK>>
+entity "PERSONAL_DATA" as PERSONAL_DATA {
+  * rod_cislo : CHAR(11) NN <<PK>>
   --
-  unit_id : NUMBER <<FK>>
-  reported_by : NUMBER <<FK>>
-  status : VARCHAR2(20)
-  reported_at : TIMESTAMP
+  name : VARCHAR2(20) NN
+  surname : VARCHAR2(30) NN
+}
+
+'Reporting a technical malfunction of the unit
+entity "FAULT_REPORT" as FAULT_REPORT {
+  * fault_id : NUMBER NN <<PK>>
+  --
+  unit_id : NUMBER NN <<FK>>
+  reported_by : NUMBER NN <<FK>>
+  status : VARCHAR2(20) NN
+  reported_at : TIMESTAMP NN
   resolved_at : TIMESTAMP
 }
 
+'Case/casebook – groups calls and units
 entity "CASE_FILE" as CASE_FILE {
-  * case_id : NUMBER <<PK>>
+  * case_id : NUMBER NN <<PK>>
   --
-  created_by : NUMBER <<FK>>
-  case_number : VARCHAR2(30)
-  opened_at : TIMESTAMP
+  created_by : NUMBER  NN <<FK>>
+  status : VARCHAR2(20) NN
+  opened_at : TIMESTAMP NN
   closed_at : TIMESTAMP
-  status : VARCHAR2(20)
   weather_snapshot : CLOB
 }
 
-entity "SHIFT" as SHIFT {
-  * shift_id : NUMBER <<PK>>
-  --
-  operator_id : NUMBER <<FK>>
-  shift_date : DATE
-  start_time : TIMESTAMP
-  end_time : TIMESTAMP
-}
-
+'Which specific unit was deployed to which specific incident
+'(a single incident may involve multiple units; a single unit may be deployed to multiple incidents over time)
 entity "CASE_UNIT_ASSIGNMENT" as CASE_UNIT_ASSIGNMENT {
-  * assignment_id : NUMBER <<PK>>
+  * assignment_id : NUMBER NN <<PK>>
   --
-  case_id : NUMBER <<FK>>
-  unit_id : NUMBER <<FK>>
-  dispatched_at : TIMESTAMP
+  case_id : NUMBER NN <<FK>>
+  unit_id : NUMBER NN <<FK>>
+  dispatched_at : TIMESTAMP NN
   arrived_at : TIMESTAMP
 }
 
+'Telephone/radio call
 entity "CALL_RECORD" as CALL_RECORD {
-  * call_id : NUMBER <<PK>>
+  * call_id : NUMBER NN <<PK>>
   --
   contact_id : NUMBER <<FK>>
-  operator_id : NUMBER <<FK>>
+  unit_id : NUMBER <<FK>>
+  operator_id : NUMBER  NN <<FK>>
   case_id : NUMBER <<FK>>
-  call_datetime : TIMESTAMP
-  duration_seconds : NUMBER
-  status : VARCHAR2(20)
+  call_datetime : TIMESTAMP NN
+  duration_seconds : NUMBER NN
+  status : VARCHAR2(20) NN
 }
 
+'universal file storage
 entity "ATTACHMENT" as ATTACHMENT {
-  * attachment_id : NUMBER <<PK>>
+  * attachment_id : NUMBER NN <<PK>>
   --
-  entity_type : VARCHAR2(20)
-  entity_id : NUMBER
-  attachment_type : VARCHAR2(20)
-  file_content : BLOB
-  uploaded_by : NUMBER <<FK>>
+  entity_type : VARCHAR2(20) NN
+  entity_id : NUMBER NN
+  uploaded_by : NUMBER NN <<FK>>
+  attachment_type : VARCHAR2(20) NN
+  file_content : BLOB NN
 }
 
+'case note – an internal record/log made by an operator regarding the progress of a case
 entity "CASE_NOTE" as CASE_NOTE {
-  * note_id : NUMBER <<PK>>
+  * note_id : NUMBER NN <<PK>>
   --
-  case_id : NUMBER <<FK>>
-  operator_id : NUMBER <<FK>>
-  note_text : CLOB
-  created_at : TIMESTAMP
+  case_id : NUMBER NN <<FK>>
+  operator_id : NUMBER NN <<FK>>
+  note_text : CLOB NN
+  created_at : TIMESTAMP NN
 }
 
 ' Relácie a väzby
 
-UNIT_TYPE "1" ||--o{ "0..*" UNIT : classifies
-SYSTEM_GROUP "1" ||--o{ "0..*" UNIT : home_station
-SYSTEM_GROUP "1" ||--o{ "0..*" OPERATOR : employs
-SYSTEM_GROUP "1" ||--o{ "0..*" SYSTEM_GROUP
+UNIT_TYPE ||--o{ UNIT : classifies
+SYSTEM_GROUP ||--o{ UNIT : home_station
+SYSTEM_GROUP ||--o{ OPERATOR : employs
+SYSTEM_GROUP |o--o{ SYSTEM_GROUP : parent_of
 
-UNIT "1" ||--o{ "0..*" FAULT_REPORT : has_fault
-OPERATOR "1" ||--o{ "0..*" FAULT_REPORT : reports
-OPERATOR "1" ||--o{ "0..*" CASE_FILE : opens
-OPERATOR "1" ||--o{ "0..*" SHIFT : works
-OPERATOR "1" ||--o{ "0..*" ATTACHMENT : uploads
-OPERATOR "1" ||--o{ "0..*" CASE_NOTE : writes
+PERSONAL_DATA ||--o{ OPERATOR : has_details
+PERSONAL_DATA ||--o{ CONTACT : has_details
+UNIT ||--o{ FAULT_REPORT : has_fault
+UNIT |o--o{ CALL_RECORD : radio_comm
+OPERATOR ||--o{ FAULT_REPORT : reports
+OPERATOR ||--o{ CASE_FILE : opens
+OPERATOR ||--o{ ATTACHMENT : uploads
+OPERATOR ||--o{ CASE_NOTE : writes
 
-CONTACT "1" ||--o{ "0..*" CALL_RECORD : makes
-OPERATOR "1" ||--o{ "0..*" CALL_RECORD : handles
-CASE_FILE "1" ||--o{ "0..*" CALL_RECORD : includes
+CONTACT |o--o{ CALL_RECORD : makes
+OPERATOR ||--o{ CALL_RECORD : handles
+CASE_FILE |o--o{ CALL_RECORD : includes
 
-UNIT "1" ||--o{ "0..*" CASE_UNIT_ASSIGNMENT : assigned_to
-CASE_FILE "1" ||--o{ "0..*" CASE_UNIT_ASSIGNMENT : contains
+UNIT ||--o{ CASE_UNIT_ASSIGNMENT : assigned_to
+CASE_FILE ||--o{ CASE_UNIT_ASSIGNMENT : contains
 
-CASE_FILE "1" ||--o{ "0..*" ATTACHMENT : has_file
-CASE_FILE "1" ||--o{ "0..*" CASE_NOTE : has_note
+CASE_FILE ||..o{ ATTACHMENT : "has_file"
+CASE_FILE ||--o{ CASE_NOTE : has_note
 
 @enduml
