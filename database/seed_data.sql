@@ -2,25 +2,25 @@
 
 -- personal_data
 insert into personal_data (rod_cislo, name, surname) values ('900101/1001', 'Jozef', 'Novak');
-insert into personal_data (rod_cislo, name, surname) values ('900202/1002', 'Maria', 'Kovacova');
+insert into personal_data (rod_cislo, name, surname) values ('905202/1002', 'Maria', 'Kovacova');
 insert into personal_data (rod_cislo, name, surname) values ('900303/1003', 'Peter', 'Horvath');
-insert into personal_data (rod_cislo, name, surname) values ('900404/1004', 'Lucia', 'Vargova');
-insert into personal_data (rod_cislo, name, surname) values ('900505/1005', 'Zuzana', 'Tothova');
+insert into personal_data (rod_cislo, name, surname) values ('905404/1004', 'Lucia', 'Vargova');
+insert into personal_data (rod_cislo, name, surname) values ('905505/1005', 'Zuzana', 'Tothova');
 insert into personal_data (rod_cislo, name, surname) values ('900606/1006', 'Roman', 'Balaz');
 insert into personal_data (rod_cislo, name, surname) values ('900707/1007', 'Daniel', 'Kralik');
 insert into personal_data (rod_cislo, name, surname) values ('900808/1008', 'Stefan', 'Stefanik');
 insert into personal_data (rod_cislo, name, surname) values ('900909/1009', 'Gabriel', 'Molnar');
-insert into personal_data (rod_cislo, name, surname) values ('901010/1010', 'Veronika', 'Sokolova');
+insert into personal_data (rod_cislo, name, surname) values ('906010/1010', 'Veronika', 'Sokolova');
 insert into personal_data (rod_cislo, name, surname) values ('910101/2001', 'Martin', 'Maly');
-insert into personal_data (rod_cislo, name, surname) values ('910202/2002', 'Jana', 'Velka');
+insert into personal_data (rod_cislo, name, surname) values ('915202/2002', 'Jana', 'Velka');
 insert into personal_data (rod_cislo, name, surname) values ('910303/2003', 'Tomas', 'Dlhy');
-insert into personal_data (rod_cislo, name, surname) values ('910404/2004', 'Eva', 'Novotna');
+insert into personal_data (rod_cislo, name, surname) values ('915404/2004', 'Eva', 'Novotna');
 insert into personal_data (rod_cislo, name, surname) values ('910505/2005', 'Juraj', 'Cierny');
-insert into personal_data (rod_cislo, name, surname) values ('910606/2006', 'Katarina', 'Biela');
+insert into personal_data (rod_cislo, name, surname) values ('915606/2006', 'Katarina', 'Biela');
 insert into personal_data (rod_cislo, name, surname) values ('910707/2007', 'Michal', 'Zeleny');
-insert into personal_data (rod_cislo, name, surname) values ('910808/2008', 'Simona', 'Modra');
+insert into personal_data (rod_cislo, name, surname) values ('915808/2008', 'Simona', 'Modra');
 insert into personal_data (rod_cislo, name, surname) values ('910909/2009', 'Andrej', 'Kratky');
-insert into personal_data (rod_cislo, name, surname) values ('911010/2010', 'Barbora', 'Stredna');
+insert into personal_data (rod_cislo, name, surname) values ('916010/2010', 'Barbora', 'Stredna');
 
 -- unit_type
 insert into unit_type (unit_type_id, code, name) values (1, 'AMB', 'Ambulancia');
@@ -60,27 +60,27 @@ insert into unit (unit_id, unit_type_id, system_group_id, status, last_position,
 
 -- operator
 insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (1, 7, '900101/1001', 'jnovak', 'DISPATCHER', 'Y');
-insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (2, 7, '900202/1002', 'mkovac', 'DISPATCHER', 'Y');
+insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (2, 7, '905202/1002', 'mkovac', 'DISPATCHER', 'Y');
 insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (3, 8, '900303/1003', 'phorvath', 'SUPERVISOR', 'Y');
-insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (4, 8, '900404/1004', 'lvarga', 'DISPATCHER', 'Y');
-insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (5, 9, '900505/1005', 'ztoth', 'DISPATCHER', 'Y');
+insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (4, 8, '905404/1004', 'lvarga', 'DISPATCHER', 'Y');
+insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (5, 9, '905505/1005', 'ztoth', 'DISPATCHER', 'Y');
 insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (6, 9, '900606/1006', 'rbalaz', 'SUPERVISOR', 'N');
 insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (7, 10, '900707/1007', 'dkralik', 'DISPATCHER', 'Y');
 insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (8, 10, '900808/1008', 'sstefan', 'DISPATCHER', 'Y');
 insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (9, 4, '900909/1009', 'gmolnar', 'ADMIN', 'Y');
-insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (10, 6, '901010/1010', 'vsokol', 'DISPATCHER', 'N');
+insert into operator (operator_id, system_group_id, rod_cislo, username, role, active) values (10, 6, '906010/1010', 'vsokol', 'DISPATCHER', 'N');
 
 -- contact
 insert into contact (contact_id, rod_cislo, phone_number) values (1, '910101/2001', '+421901111001');
-insert into contact (contact_id, rod_cislo, phone_number) values (2, '910202/2002', '+421901111002');
+insert into contact (contact_id, rod_cislo, phone_number) values (2, '915202/2002', '+421901111002');
 insert into contact (contact_id, rod_cislo, phone_number) values (3, '910303/2003', '+421901111003');
-insert into contact (contact_id, rod_cislo, phone_number) values (4, '910404/2004', '+421901111004');
+insert into contact (contact_id, rod_cislo, phone_number) values (4, '915404/2004', '+421901111004');
 insert into contact (contact_id, rod_cislo, phone_number) values (5, '910505/2005', '+421901111005');
-insert into contact (contact_id, rod_cislo, phone_number) values (6, '910606/2006', '+421901111006');
+insert into contact (contact_id, rod_cislo, phone_number) values (6, '915606/2006', '+421901111006');
 insert into contact (contact_id, rod_cislo, phone_number) values (7, '910707/2007', '+421901111007');
-insert into contact (contact_id, rod_cislo, phone_number) values (8, '910808/2008', '+421901111008');
+insert into contact (contact_id, rod_cislo, phone_number) values (8, '915808/2008', '+421901111008');
 insert into contact (contact_id, rod_cislo, phone_number) values (9, '910909/2009', '+421901111009');
-insert into contact (contact_id, rod_cislo, phone_number) values (10, '911010/2010', '+421901111010');
+insert into contact (contact_id, rod_cislo, phone_number) values (10, '916010/2010', '+421901111010');
 
 -- case_file
 insert into case_file (case_id, created_by, status, opened_at, closed_at, weather_snapshot) values (1, 1, 'CLOSED', timestamp '2026-01-05 08:12:00', timestamp '2026-01-05 09:40:00', 'Jasno, 2 C');
