@@ -128,6 +128,17 @@ class People_menu:
         for button in self.action_buttons:
             button.config(state="disabled")
 
+    # Manages the visibility and state of all dynamic buttons based on current_view
+    def update_ui_state(self):
+
+        # Add Contact (2) a Add Operator (3) visible only in Personal Info (0)
+        if self.current_view == 0:
+            self.action_buttons[2].pack(side="left", padx=5)
+            self.action_buttons[3].pack(side="left", padx=5)
+        else:
+            self.action_buttons[2].pack_forget()
+            self.action_buttons[3].pack_forget()
+
 
     def on_selected(self, event=None):
         selected = self.tree.selection()
@@ -139,11 +150,11 @@ class People_menu:
                     for button in self.action_buttons:
                         button.config(state="normal")
                 case 1:
-                    self.contact_module.selected = int(selected[0])                
+                    self.contact_module.selected = int(selected[0])
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
                 case 2:
-                    self.operator_module.selected = int(selected[0])               
+                    self.operator_module.selected = int(selected[0])
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
         else:
@@ -157,12 +168,11 @@ class People_menu:
     def update_view_table(self):
         update_table_columns(self.tree, self.modules[self.current_view].des)
         self.load_data()
-        
+        selt.update_ui_state()
+
     def edit_data(self):
         self.modules[self.current_view].edit(self.tree)
 
     def delete_data(self):        
         self.modules[self.current_view].delete()
         self.load_data()
-        
-
