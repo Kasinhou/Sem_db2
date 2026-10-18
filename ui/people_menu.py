@@ -103,7 +103,8 @@ class People_menu:
                     setattr(self, "current_view", 2),
                     self.update_view_table()
                 )
-            )
+            ),
+            ("Export XML", self.operator_module.export_xml)
         ]
 
         for text, command in buttons:
@@ -139,6 +140,11 @@ class People_menu:
             self.action_buttons[2].pack_forget()
             self.action_buttons[3].pack_forget()
 
+        # Export XML button (4) visible only in Operators (2)
+        if self.current_view == 2:
+            self.action_buttons[4].pack(side="left", padx=5)
+        else:
+            self.action_buttons[4].pack_forget()
 
     def on_selected(self, event=None):
         selected = self.tree.selection()
@@ -168,7 +174,7 @@ class People_menu:
     def update_view_table(self):
         update_table_columns(self.tree, self.modules[self.current_view].des)
         self.load_data()
-        selt.update_ui_state()
+        self.update_ui_state()
 
     def edit_data(self):
         self.modules[self.current_view].edit(self.tree)
