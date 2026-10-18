@@ -49,9 +49,12 @@ def delete_person(rod_cislo):
 
 def get_person_age(rod_cislo):
     sql = """
-        select t.p.get_age()
-        from (select t_person(rod_cislo, name, surname) as p
-        from personal_data where rod_cislo = :1) t
+        select tp.person.get_age() age
+        from (
+            select t_person(rod_cislo, name, surname) as person
+            from personal_data 
+            where rod_cislo = :1
+        ) tp
     """
     with db.get_connection() as conn:
         with conn.cursor() as cur:
@@ -62,9 +65,12 @@ def get_person_age(rod_cislo):
 
 def get_person_sex(rod_cislo):
     sql = """
-        select t.p.get_sex()
-        from (select t_person(rod_cislo, name, surname) as p
-        from personal_data where rod_cislo = :1) t
+        select tp.person.get_sex() sex
+        from (
+            select t_person(rod_cislo, name, surname) as person
+            from personal_data 
+            where rod_cislo = :1
+        ) tp
     """
     with db.get_connection() as conn:
         with conn.cursor() as cur:
