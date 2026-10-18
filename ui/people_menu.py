@@ -106,9 +106,8 @@ class People_menu:
                 )
             ),
             ("Get Age", lambda: self.person_module.show_age()),
-            ("Get Sex", lambda: self.person_module.show_sex())
-
-            ),
+            ("Get Sex", lambda: self.person_module.show_sex()),
+            ("Show XML", self.operator_module.show_xml),
             ("Export XML", self.operator_module.export_xml)
         ]
 
@@ -121,6 +120,8 @@ class People_menu:
             )
             button.pack(side="left", padx=5)
             self.action_buttons.append(button)
+
+        self.update_ui_state()
 
     def load_data(self):
         self.tree.delete(*self.tree.get_children())
@@ -135,38 +136,52 @@ class People_menu:
 
     # Manages the visibility and state of all dynamic buttons based on current_view
     def update_ui_state(self):
+        # Edit (0), Delete (1) always
+        for i in (0, 1):
+            self.action_buttons[i].pack(side="left", padx=5)
 
-        # Add Contact (2) a Add Operator (3) visible only in Personal Info (0)
-        if self.current_view == 0:
-            self.action_buttons[2].pack(side="left", padx=5)
-            self.action_buttons[3].pack(side="left", padx=5)
-        else:
-            self.action_buttons[2].pack_forget()
-            self.action_buttons[3].pack_forget()
+        # Add Contact (2), Add Operator (3), Get Age(4), Get Sex(5)  visible only in Personal Info (0)
+        for i in (2, 3, 4, 5):
+            if self.current_view == 0:
+                self.action_buttons[i].pack(side="left", padx=5)
+            else:
+                self.action_buttons[i].pack_forget()
 
-        # Export XML button (4) visible only in Operators (2)
-        if self.current_view == 2:
-            self.action_buttons[4].pack(side="left", padx=5)
-        else:
-            self.action_buttons[4].pack_forget()
+        # Show XML (6), Export XML (7) visible only in Operators (2)
+        for i in (6, 7):
+            if self.current_view == 2:
+                self.action_buttons[i].pack(side="left", padx=5)
+            else:
+                self.action_buttons[i].pack_forget()
 
     def on_selected(self, event=None):
         selected = self.tree.selection()
 
         if selected:
             match self.current_view:
+                # Personal Info
                 case 0:
                     self.person_module.selected = selected[0]
-                    for button in self.action_buttons:
-                        button.config(state="normal")
+                    for i in range(6):
+                        self.action_buttons[i].config(state="normal")
+                    for i in (6, 7):
+                        self.action_buttons[i].config(state="disabled")
+
+                # Contacts
                 case 1:
                     self.contact_module.selected = int(selected[0])
                     for i in range(2):
                         self.action_buttons[i].config(state="normal")
+                    for i in range(2, 8):
+                        self.action_buttons[i].config(state="disabled")
+
+                # Operators
                 case 2:
                     self.operator_module.selected = int(selected[0])
-                    for i in range(2):
+                    for i in (0, 1, 6, 7):
                         self.action_buttons[i].config(state="normal")
+                    for i in (2, 3, 4, 5):
+                        self.action_buttons[i].config(state="disabled")
         else:
             for module in self.modules:
                 module.selected = None
