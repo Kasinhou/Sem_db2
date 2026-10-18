@@ -12,9 +12,6 @@ create or replace type t_gps_position as object (
     -- vzdialenost medzi dvoma poziciami
     member function distance_km(p_other in t_gps_position) return number,
 
-    -- funkcia export pozicie do JSON pre report
-    member function to_json return varchar2,
-
     -- metoda na triedenie
     map member function sort_key return number
 );
