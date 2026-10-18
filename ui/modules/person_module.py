@@ -68,3 +68,21 @@ class Person_modul(Module):
 
     def load(self):
         return persons.list_persons()
+
+    def show_age(self):
+        if not self.selected:
+            return
+        try:
+            age = persons.get_person_age(self.selected)
+            messagebox.showinfo("Age", f"Age: {age} years")
+        except Exception as exc:
+            messagebox.showerror("Database error", str(exc))
+
+    def show_sex(self):
+        if not self.selected:
+            return
+        try:
+            sex = persons.get_person_sex(self.selected)
+            messagebox.showinfo("Sex", f"Sex: {sex}")
+        except Exception as exc:
+            messagebox.showerror("Database error", str(exc))

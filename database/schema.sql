@@ -6,11 +6,8 @@ create or replace type t_gps_position as object (
     longitude   number(9,6),
     recorded_at timestamp,
 
-    constructor function t_gps_position(p_lat number, p_lon number)
+    constructor function t_gps_position(lat number, lon number)
         return self as result,
-
-    -- vzdialenost medzi dvoma poziciami
-    member function distance_km(p_other in t_gps_position) return number,
 
     -- metoda na triedenie
     map member function sort_key return number

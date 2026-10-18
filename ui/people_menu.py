@@ -91,7 +91,10 @@ class People_menu:
                     setattr(self, "current_view", 2),
                     self.update_view_table()
                 )
-            )
+            ),
+            ("Get Age", lambda: self.person_module.show_age()),
+            ("Get Sex", lambda: self.person_module.show_sex())
+
         ]
 
         for text, command in buttons:
