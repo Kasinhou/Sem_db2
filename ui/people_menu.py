@@ -105,6 +105,10 @@ class People_menu:
                     self.update_view_table()
                 )
             ),
+            ("Get Age", lambda: self.person_module.show_age()),
+            ("Get Sex", lambda: self.person_module.show_sex())
+
+            ),
             ("Export XML", self.operator_module.export_xml)
         ]
 

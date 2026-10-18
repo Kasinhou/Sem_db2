@@ -46,3 +46,34 @@ def delete_person(rod_cislo):
         with conn.cursor() as cur:
             cur.execute(sql, [rod_cislo])
             conn.commit()
+
+def get_person_age(rod_cislo):
+    sql = """
+        select tp.person.get_age() age
+        from (
+            select t_person(rod_cislo, name, surname) as person
+            from personal_data 
+            where rod_cislo = :1
+        ) tp
+    """
+    with db.get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, [rod_cislo])
+            row = cur.fetchone()
+            return row[0] if row else None
+
+
+def get_person_sex(rod_cislo):
+    sql = """
+        select tp.person.get_sex() sex
+        from (
+            select t_person(rod_cislo, name, surname) as person
+            from personal_data 
+            where rod_cislo = :1
+        ) tp
+    """
+    with db.get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(sql, [rod_cislo])
+            row = cur.fetchone()
+            return row[0] if row else None
