@@ -8,6 +8,18 @@ class People_menu:
         self.root = root
         self.current_view = 0 #0 - people, 1 - contacts, 2 - operators;
 
+        # style
+        style = ttk.Style()
+        style.map("TButton",
+                  foreground=[
+                      ("disabled", "#888888"),
+                  ],
+                  background=[
+                      ("disabled", "#C7C7C7"),
+                      ("pressed", "#003366"),
+                  ]
+        )
+
         self.person_module = person_module
         self.operator_module = operator_module
         self.contact_module = contact_module
