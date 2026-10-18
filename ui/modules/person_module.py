@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 
 from ui.modules.module import Module
+import src.persons as persons
 
 class Person_modul(Module):
 
@@ -21,9 +22,10 @@ class Person_modul(Module):
         if(person is None):
             return
 
-        #use sql to save person
-
-        self.values.append(person)
+        try:
+            persons.add_person(person[0], person[1], person[2])
+        except Exception as exc:
+            messagebox.showerror("Database error", str(exc))
     def edit(self,tree):
         if not self.selected:
             return
@@ -42,12 +44,11 @@ class Person_modul(Module):
         if(person is None):
             return
 
-        tree.item(self.selected, values=person)  
-        for i in range(len(self.values)):
-            if self.values[i][0] == self.selected:
-                self.values[i] = person 
-                break
-        #use sql to save person   
+        try:
+            persons.update_person(self.selected, person[1], person[2])
+            tree.item(self.selected, values=(self.selected, person[1], person[2]))
+        except Exception as exc:
+            messagebox.showerror("Database error", str(exc))
 
     def delete(self):
         if not self.selected:
@@ -59,14 +60,12 @@ class Person_modul(Module):
         ):
             return
 
-        #ADD SQL
-        for i in range(len(self.values)):
-            if self.values[i][0] == self.selected:
-                self.values.remove(self.values[i])
-                break
+        try:
+            persons.delete_person(self.selected)
+        except Exception as exc:
+            messagebox.showerror("Database error", str(exc))
 
-        self.selected = None        
+        self.selected = None
 
     def load(self):
-        #sql
-        return self.values
+        return persons.list_persons()
