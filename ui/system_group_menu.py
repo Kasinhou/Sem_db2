@@ -12,7 +12,7 @@ class System_group_menu:
         self.unit_module = unit_module
         self.unit_type_module = unit_type_module
 
-        self.modules = [self.system_group_modul, self.unit_module, self.unit_type_module]
+        self.modules = [self.system_group_module, self.unit_module, self.unit_type_module]
        
         self.create()
 
