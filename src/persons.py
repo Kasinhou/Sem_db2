@@ -3,7 +3,11 @@ import src.db as db
 
 
 def list_persons():
-    sql = "select rod_cislo, name, surname from personal_data order by rod_cislo"
+    sql = '''
+        select rod_cislo, name, surname 
+        from personal_data 
+        order by rod_cislo
+    '''
     with db.get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql)
@@ -11,7 +15,10 @@ def list_persons():
 
 
 def add_person(rod_cislo, name, surname):
-    sql = "insert into personal_data (rod_cislo, name, surname) values (:1, :2, :3)"
+    sql = '''
+        insert into personal_data (rod_cislo, name, surname) 
+        values (:1, :2, :3)
+    '''
     with db.get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, [rod_cislo, name, surname])
@@ -19,7 +26,11 @@ def add_person(rod_cislo, name, surname):
 
 
 def update_person(rod_cislo, name, surname):
-    sql = "update personal_data set name = :1, surname = :2 where rod_cislo = :3"
+    sql = '''
+        update personal_data 
+        set name = :1, surname = :2 
+        where rod_cislo = :3
+    '''
     with db.get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, [name, surname, rod_cislo])
@@ -27,7 +38,10 @@ def update_person(rod_cislo, name, surname):
 
 
 def delete_person(rod_cislo):
-    sql = "delete from personal_data where rod_cislo = :1"
+    sql = '''
+        delete from personal_data 
+        where rod_cislo = :1
+    '''
     with db.get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, [rod_cislo])

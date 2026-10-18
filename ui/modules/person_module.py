@@ -9,8 +9,7 @@ class Person_modul(Module):
 
     def __init__(self, root):
         super().__init__(root)
-        self.values = [("841106/3456","Jozko","Mrkvicka"),("855130/3695","Magdalena","Mrkvova"),("850130/3695","Mojmir","Kovac"),("845312/7845","Marisa","Clnkova")] # temp data
-        self.des = ["personal_id_number", "first_name", "last_name"]  
+        self.des = ["personal_id_number", "first_name", "last_name"]
 
     def add(self):
         person = open_form(self.root,"Add Personal Info", [
