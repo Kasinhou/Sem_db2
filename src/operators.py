@@ -26,10 +26,10 @@ def add_operator(system_group_id, rod_cislo, username, role, active):
 
 def update_operator(operator_id, system_group_id, rod_cislo, username, role, active):
     sql = '''
-        update operator 
-        set system_group_id = :1, rod_cislo = :2, username = :3, role = :4, active = :5 
-        where operator_id = :6
-    '''
+      update operator
+      set system_group_id = :1, rod_cislo = :2, username = :3, role = :4, active = :5
+      where operator_id = :6 \
+      '''
     with db.get_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(sql, [system_group_id, rod_cislo, username, role, active, operator_id])
