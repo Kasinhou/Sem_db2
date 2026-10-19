@@ -1,9 +1,10 @@
-from ui.reusable_ui_elements import open_form
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-from ui.modules.module import Module
 import src.operators as operators
+from ui.modules.module import Module
+from ui.reusable_ui_elements import open_form
+
 
 class Operator_modul(Module):
 
@@ -82,6 +83,42 @@ class Operator_modul(Module):
             messagebox.showerror("Database error", str(exc))
 
         self.selected = None
+
+    def show_xml(self):
+        if not self.selected:
+            return
+
+        try:
+            xml = operators.get_operator_xml(self.selected)
+        except Exception as exc:
+            messagebox.showerror("Database error", str(exc))
+            return
+
+        if xml is None:
+            messagebox.showerror("XML", f"Operator {self.selected} not found")
+            return
+
+        # WINDOW to display the XML content
+        window = tk.Toplevel(self.root)
+        window.title(f"XML for Operator {self.selected}")
+        window.geometry("700x500")
+
+        text = tk.Text(window, wrap="none", font=("Courier", 11))
+
+        # Add scrollbars to the text
+        scroll_y = ttk.Scrollbar(window, orient="vertical", command=text.yview)
+        scroll_x = ttk.Scrollbar(window, orient="horizontal", command=text.xview)
+        text.configure(yscrollcommand=scroll_y.set, xscrollcommand=scroll_x.set)
+        scroll_y.pack(side="right", fill="y")
+        scroll_x.pack(side="bottom", fill="x")
+        text.pack(fill="both", expand=True)
+
+        text.insert("1.0", xml)
+        text.config(state="disabled")
+
+    def export_xml(self):
+        # TODO not implemented yet
+        pass
 
     def load(self):
         return operators.list_operators()
